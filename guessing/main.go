@@ -1,8 +1,12 @@
+// wykonano etapy od 1 do 6
+
 package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"os"
 	"sort"
@@ -12,16 +16,17 @@ import (
 )
 
 const MaxValue = 10
+const ScoresFileName = "scores.json"
 
 type Score struct {
-	name  string
-	value int
-	date  time.Time
+	Name  string
+	Value int
+	Data  time.Time
 }
 
 //type BestScoreEntry struct {
-//	name  string
-//	value int
+//	Name  string
+//	Value int
 //}
 
 func getRandomNumber() int {
@@ -44,37 +49,51 @@ func endGame(scores []Score) {
 
 	//nameToBestScore := map[string]int{}
 	//for _, score := range scores {
-	//	if nameToBestScore[score.name] < score.value {
-	//		nameToBestScore[score.name] = score.value
+	//	if nameToBestScore[score.Name] < score.Value {
+	//		nameToBestScore[score.Name] = score.Value
 	//	}
 	//}
 	//var bestScoreEntries []BestScoreEntry
-	//for name, bestScore := range nameToBestScore {
-	//	bestScoreEntries = append(bestScoreEntries, BestScoreEntry{name, bestScore})
+	//for Name, bestScore := range nameToBestScore {
+	//	bestScoreEntries = append(bestScoreEntries, BestScoreEntry{Name, bestScore})
 	//}
 	//sort.Slice(bestScoreEntries, func(i, j int) bool {
-	//	return bestScoreEntries[i].value < bestScoreEntries[j].value
+	//	return bestScoreEntries[i].Value < bestScoreEntries[j].Value
 	//})
 	sort.Slice(scores, func(i, j int) bool {
-		return scores[i].value < scores[j].value
+		return scores[i].Value < scores[j].Value
 	})
 
 	fmt.Println("standings | BEST SCORES")
 	for _, score := range scores {
-		fmt.Println("standings | " + score.name + " - " + strconv.Itoa(score.value))
+		fmt.Println("standings | " + score.Name + " - " + strconv.Itoa(score.Value))
 	}
 	os.Exit(0)
 }
 
 func main() {
 	var scores []Score
+	data, err := ioutil.ReadFile(ScoresFileName)
+	if err != nil {
+		_, _ = fmt.Fprintln(os.Stderr,
+			"welcome | Failed to read the file with scores, I assume it's your first game! Welcome! "+
+				"The error was: ", err)
+	} else {
+		err := json.Unmarshal(data, &scores)
+		if err != nil {
+			_, _ = fmt.Fprintln(os.Stderr,
+				"error | Failed to parse JSON from the file with scores. Try deleting it to recreate it.", err)
+			return
+		}
+	}
+
 	rand.Seed(time.Now().UnixNano())
 
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for true {
 		fmt.Println("welcome | Hello human! You will be guessing numbers.")
-		fmt.Print("name | Type your name: ")
+		fmt.Print("Name | Type your Name: ")
 		name := readLine(scanner)
 		maxValueStr := strconv.Itoa(MaxValue)
 		fmt.Print("next unknown " + maxValueStr + " | Proceed with a number between 0 and " + maxValueStr + ": ")
@@ -94,7 +113,7 @@ func main() {
 			// string to int
 			inputInt, err := strconv.Atoi(input)
 			if err != nil {
-				_, _ = fmt.Fprintln(os.Stderr, "error | your input is not 'koniec' nor a valid integer: ", err)
+				_, _ = fmt.Fprintln(os.Stderr, "error | Your input is not 'koniec' nor a valid integer: ", err)
 			}
 
 			if inputInt > target {
@@ -108,11 +127,33 @@ func main() {
 			}
 		}
 
+		newScore := Score{name, tries, time.Now()}
+		scores = append(scores, newScore)
+
+		fmt.Println(scores)
+		jsonScores, err := json.Marshal(scores)
+		fmt.Println(string(jsonScores))
+		if err != nil {
+			_, _ = fmt.Fprintln(os.Stderr, "error | Error has somehow occurred while marshalling JSON!?: ", err)
+			return
+		}
+
+		// You can also write it to a file as a whole
+		file, err := os.Create(ScoresFileName)
+		if err != nil {
+			_, _ = fmt.Fprintln(os.Stderr, "error | Error has occurred while creating your scores file: ", err)
+			return
+		}
+		_, err = file.WriteString(string(jsonScores))
+		if err != nil {
+			_, _ = fmt.Fprintln(os.Stderr, "error | Error has occurred while saving your score to a file: ", err)
+			return
+		}
+		_ = file.Close()
+
 		fmt.Print("again | Play again? [Y/n] ")
 
 		input := readLine(scanner)
-		newScore := Score{name, tries, time.Now()}
-		scores = append(scores, newScore)
 
 		if input == "" || strings.ToLower(input) == "y" || strings.ToLower(input) == "yes" {
 			continue
