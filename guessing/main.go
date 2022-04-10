@@ -1,17 +1,18 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"math/rand"
+	"os"
 	"strconv"
 	"time"
 )
 
+const MaxValue = 100
+
 func getRandomNumber() int {
-	min := 0
-	max := 1000
-	random := rand.Intn(max-min+1) + min
-	return random
+	return rand.Intn(MaxValue + 1)
 }
 
 func main() {
@@ -23,19 +24,36 @@ func main() {
 	target := getRandomNumber()
 	tries := 0
 
+	scanner := bufio.NewScanner(os.Stdin)
+
 	for true {
 		tries += 1
-		var input int
 
-		if _, err := fmt.Scanf("%d\n", &input); err != nil {
+		scanner.Scan()
+		input := scanner.Text()
+
+		if err := scanner.Err(); err != nil {
+			_, _ = fmt.Fprintln(os.Stderr, "error | reading standard input:", err)
 		}
-		if input > target {
+
+		if input == "koniec" {
+			os.Exit(0)
+		}
+
+		// string to int
+		inputInt, err := strconv.Atoi(input)
+		if err != nil {
+			_, _ = fmt.Fprintln(os.Stderr, "error | your input is not 'koniec' nor a valid integer: ", err)
+		}
+
+		if inputInt > target {
 			fmt.Print("next lower 0 1000 | The number you guessed is too high! Try again: ")
-		} else if input < target {
+		} else if inputInt < target {
 			fmt.Print("next higher 0 1000 | The number you guessed is too low! Try again: ")
 		} else {
 			triesStr := strconv.Itoa(tries)
 			fmt.Println("success " + triesStr + " | You got it in " + triesStr + " tries!")
+			break
 		}
 	}
 
