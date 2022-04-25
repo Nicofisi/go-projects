@@ -38,7 +38,7 @@ func readLine(scanner *bufio.Scanner) string {
 	input := scanner.Text()
 
 	if err := scanner.Err(); err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, "error | reading standard input:", err)
+		_, _ = fmt.Fprintln(os.Stderr, "error | reading standard input: ", err)
 	}
 
 	return input
