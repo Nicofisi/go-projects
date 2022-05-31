@@ -31,7 +31,9 @@ commitów? Jak wyjmę później dzisiaj laptopa, to je tu wrzucę.
 
 ## `???`
 
-*Status: projekt jest wymyślany*
+*Status: projekt jest tworzony*
 
-Chciałbym zrobić jeszcze jakiś projekt. Idę na dwór, na rower, poszukać
-inspiracji.
+~~Chciałbym zrobić jeszcze jakiś projekt. Idę na dwór, na rower, poszukać
+inspiracji.~~
+
+Tetris! To on powstaje.
