@@ -29,7 +29,7 @@ decyzji co do swojej trasy.
 Projekt generalnie ukończony, jednak widzę, że chyba nie mam tu najnowszych
 commitów? Jak wyjmę później dzisiaj laptopa, to je tu wrzucę.
 
-## `???`
+## `tetris`
 
 *Status: projekt jest tworzony*
 
