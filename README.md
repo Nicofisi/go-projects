@@ -36,4 +36,8 @@ commitów? Jak wyjmę później dzisiaj laptopa, to je tu wrzucę.
 ~~Chciałbym zrobić jeszcze jakiś projekt. Idę na dwór, na rower, poszukać
 inspiracji.~~
 
-Tetris! To on powstaje.
+~~Tetris! To on powstaje.~~
+
+Aktualizacja: biblioteka graficzna, której używałem, jest do niczego. Spróbuję z
+inną.
+
